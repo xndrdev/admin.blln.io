@@ -1,0 +1,14 @@
+{
+  "name": "admin2.blln.io",
+  "version": "1.0.0",
+  "description": "Administration tool for blln.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Wolf <alexander@goltfisch.de>",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^7.4.1"
+  }
+}
