@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: admin.blln.io-postgres
+    ports:
+      - '5432:5432'
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: admin.blln.io-pgadmin
+    links:
+      - postgres:db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@example.com
+      - PGADMIN_DEFAULT_PASSWORD=12345678
+    ports:
+      - '80:80'
+  node:
+    image: node:8
+    container_name: admin.blln.io-node
+    links:
+      - postgres:db
+    command: bash
+    stdin_open: true
+    tty: true
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - '3000:3000'
