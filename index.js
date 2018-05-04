@@ -1,109 +1,47 @@
-const express = require('express'),
-    app = express(),
-    Sequelize = require('sequelize')
-    dotenv = require('dotenv').config(),
-    bcrypt = require('bcrypt'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+const express = require('express');
+const passport = require('passport');
+const dotenv = require('dotenv').config();
+const LocalStrategy = require('passport-local').Strategy;
+const { logger } = require('./util');
+const {
+  sequelize, init, authenticate, Administrator, Shop
+} = require('./database');
 
-//environment variables
-if(dotenv.error){
-    console.error(dotenv.error);
-}
+const app = express();
 
-//DB Connection
-sequelize = new Sequelize({
-    database: process.env.DB_NAME,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'postgres',
-    dialectOptions: {
-        ssl: true
-    }
-});
+async function main() {
+  if (dotenv.error) {
+    throw new Error('Environment variables note set!');
+  }
 
-sequelize
-  .authenticate()
-  .then(() => {
-      console.log('DB Connection established');
-  })
-  .catch(err => {
-      console.error('Unable to connect: ', err);
+  await authenticate(sequelize);
+  await init(sequelize);
+
+  // authentication
+  passport.use(new LocalStrategy((username, password, done) => {
+    // TODO: implement
+    done();
+  }));
+
+  // routing
+  app.get('/', (req, res) => {
+    res.send('Hello World!');
   });
 
-//Shop model
-const Shop = sequelize.define('shop', {
-    url: {
-        type: Sequelize.STRING,
-        field: 'url'
-    },
-    name: {
-        type: Sequelize.STRING,
-        field: 'name'
-    },
-    createdAt: {
-        type: Sequelize.DATE,
-        field: 'created_at'
-    },
-    updatedAt: {
-      type: Sequelize.DATE,
-      field: 'updated_at'
-    }
-});
-
-//Administrator model
-const Administrator = sequelize.define('administrator', {
-    username: Sequelize.STRING,
-    email: Sequelize.STRING,
-    password: Sequelize.STRING,
-    createdAt: Sequelize.DATE,
-    updatedAt: Sequelize.DATE
-});
-
-sequelize.sync()
-    .then(() => {
-        return bcrypt.hash(process.env.INITIAL_PASSWORD, 10);
-    })
-    .then(password => Administrator.create({
-        username: 'alexander',
-        emai: 'alexander@goltfisch.de',
-        password,
-        createdAt: new Date,
-        updatedAt: new Date
+  app.get('/shops', (req, res) =>
+    Shop.findAll().then((shops) => {
+      res.send(shops);
     }));
 
-//authentication
-passport.use(new LocalStrategy(
-    function(username, password, done) {
+  app.get('/administrators', (req, res) =>
+    Administrator.findAll().then((administrators) => {
+      res.send(administrators);
+    }));
 
-    }
-));
+  // listen start
+  app.listen(3000, () => {
+    logger.log('Server running on port 3000');
+  });
+}
 
-//routing
-app.get('/', (req, res) => {
-  res.send('hI');
-});
-
-app.get('/shops', function(req, res) {
-  console.log('list shops');
-
-  Shop.findAll().then(shops => {
-    console.log(shops);
-    res.send(shops);
-  })
-});
-
-app.get('/administrators', (req, res) => {
-    console.log('list administrators');
-
-    Administrator.findAll().then(administrators => {
-        res.send(administrators);
-    });
-});
-
-//listen start
-app.listen(3000, function() {
-    console.log('what up on 3000?');
-});
+main();

@@ -4,6 +4,7 @@
   "description": "Administration tool for blln.io",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "lint": "eslint . --cache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
