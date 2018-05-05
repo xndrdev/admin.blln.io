@@ -15,7 +15,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=user@example.com
       - PGADMIN_DEFAULT_PASSWORD=12345678
     ports:
-      - '80:80'
+      - '8000:80'
   node:
     image: node:8
     container_name: admin.blln.io-node
