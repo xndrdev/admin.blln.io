@@ -24,16 +24,12 @@ async function main() {
   }));
 
   // routing
-  app.get('/', (req, res) => {
-    res.send('Hello World!');
-  });
-
-  app.get('/shops', (req, res) =>
+  app.get('/api/shops', (req, res) =>
     Shop.findAll().then((shops) => {
       res.send(shops);
     }));
 
-  app.get('/administrators', (req, res) =>
+  app.get('/api/administrators', (req, res) =>
     Administrator.findAll().then((administrators) => {
       res.send(administrators);
     }));
