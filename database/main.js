@@ -14,7 +14,7 @@ const sequelize = new Sequelize({
   port: DB_PORT,
   dialect: 'postgres',
   dialectOptions: {
-    ssl: USE_SSL
+    ssl: (USE_SSL === 'true')
   }
 });
 
